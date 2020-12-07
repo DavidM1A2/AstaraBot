@@ -1,4 +1,4 @@
-package com.davidm1a2.astarabot.message.data
+package com.davidm1a2.astarabot.domain.message.data
 
 enum class MessageType {
     CHAT,

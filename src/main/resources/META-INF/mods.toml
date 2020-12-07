@@ -41,7 +41,7 @@ versionRange = "[31,)"
 # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
 ordering = "NONE"
 # Side this dependency is applied on - BOTH, CLIENT or SERVER
-side = "BOTH"
+side = "CLIENT"
 
 # The second mod dependency is minecraft 1.15.2
 [[dependencies.astarabot]]
