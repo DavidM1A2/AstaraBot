@@ -7,6 +7,7 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import net.minecraft.client.resources.I18n
+import kotlin.math.max
 
 class CommandProcessor(private val sender: MessageDispatcher, listings: Listings) {
     private val dispatcher: CommandDispatcher<MessagePlayer> = CommandDispatcher()
@@ -17,14 +18,18 @@ class CommandProcessor(private val sender: MessageDispatcher, listings: Listings
             literal<MessagePlayer>("help")
                 .executes {
                     sender.send(it.source, "AstaraBot Commands:")
-                    sender.send(it.source, "listings")
+                    sender.send(it.source, "listing remove <item=ALL>")
+                    sender.send(it.source, "listing by <player=${it.source.name}>")
+                    sender.send(it.source, "listing find <item>")
+                    sender.send(it.source, "sell <item> <count> <price in diamonds>")
+                    sender.send(it.source, "buy <item> <player> <multiplier=1>")
                     1
                 }
         )
 
         // listings -> prints out your listings
         dispatcher.register(
-            literal<MessagePlayer>("listings")
+            literal<MessagePlayer>("listing")
                 .executes {
                     val listingSet = listings.list(it.source.id)
                     if (listingSet.isEmpty()) {
@@ -43,21 +48,24 @@ class CommandProcessor(private val sender: MessageDispatcher, listings: Listings
     }
 
     fun process(player: MessagePlayer, command: String) {
+        //if (Minecraft.getInstance().player?.gameProfile?.id != player.id) {
         try {
             dispatcher.execute(command, player)
         } catch (e: CommandSyntaxException) {
             sender.send(player, e.rawMessage.string)
 
+            // Copied from  Vanilla
             if (e.input != null && e.cursor >= 0) {
                 val errorPos = e.input.length.coerceAtMost(e.cursor)
                 var errorStr = ""
                 if (errorPos > 10) {
-                    errorStr = "$errorStr..."
+                    errorStr = "..."
                 }
-                errorStr += e.input.substring(0.coerceAtLeast(errorPos - 10), errorPos)
+                errorStr += e.input.substring(max(errorPos - 10, 0), errorPos)
                 errorStr += I18n.format("command.context.here")
                 sender.send(player, errorStr)
             }
         }
+        //}
     }
 }

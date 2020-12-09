@@ -7,11 +7,11 @@ import java.util.*
 class Listings {
     private val playerListings: MutableMap<UUID, MutableSet<ListingEntry>> = mutableMapOf()
 
-    fun addL(sellerId: UUID, item: IItemProvider, price: Int): CommandResult {
+    fun add(sellerId: UUID, item: IItemProvider, count: Int, price: Int): CommandResult {
         val listings = playerListings.computeIfAbsent(sellerId) { mutableSetOf() }
         val isUpdating = listings.any { it.item == item.asItem() }
         return if (isUpdating || listings.size < MAX_LISTINGS) {
-            val marketEntry = ListingEntry(sellerId, item.asItem(), price)
+            val marketEntry = ListingEntry(sellerId, item.asItem(), count, price)
             if (isUpdating) {
                 listings.removeIf { it.item == item.asItem() }
                 listings.add(marketEntry)

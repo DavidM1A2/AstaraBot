@@ -6,5 +6,6 @@ import java.util.*
 data class ListingEntry(
     val seller: UUID,
     val item: Item,
+    val count: Int,
     val price: Int // in diamonds
 )

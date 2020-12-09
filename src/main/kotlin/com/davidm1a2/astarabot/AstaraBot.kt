@@ -6,6 +6,7 @@ import com.davidm1a2.astarabot.domain.message.CommandProcessor
 import com.davidm1a2.astarabot.domain.message.processor.MessageDispatcher
 import com.davidm1a2.astarabot.domain.message.processor.MessageHandler
 import com.davidm1a2.astarabot.domain.message.processor.MessageParser
+import com.davidm1a2.astarabot.domain.packet.PacketInterceptor
 import com.davidm1a2.astarabot.persistent.Listings
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.LogicalSide
@@ -19,10 +20,13 @@ class AstaraBot {
 
         val listings = Listings()
 
-        val commandProcessor = CommandProcessor(MessageDispatcher(), listings)
+        val messageDispatcher = MessageDispatcher()
+        val commandProcessor = CommandProcessor(messageDispatcher, listings)
         val messageHandler = MessageHandler(commandProcessor)
         if (EffectiveSide.get() == LogicalSide.CLIENT) {
             forgeBus.register(IngameChatHandler(messageHandler, MessageParser()))
+            forgeBus.register(PacketInterceptor())
+            forgeBus.register(messageDispatcher)
         }
     }
 }
