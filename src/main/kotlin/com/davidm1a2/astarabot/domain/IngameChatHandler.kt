@@ -14,7 +14,6 @@ class IngameChatHandler(
     fun onClientChatReceivedEvent(event: ClientChatReceivedEvent) {
         if (event.type == ChatType.SYSTEM) { // System message = sent by the server not by the client
             val message = parser.parse(event.message.string)
-            println("Received: $message")
             handler.receive(message)
         }
     }
