@@ -18,7 +18,7 @@ class MessageDispatcher {
     private var lastServerWorldTime = 0L
     private var serverThrottleValue = 0L
 
-    private var lastPlayerToSend = MessagePlayer.UNKNOWN
+    private var lastPlayerSentTo = MessagePlayer.UNKNOWN
     private var threadStatus = ProcessStatus.WAITING
     private val msgQueue: Queue<PendingMessage> = LinkedList()
     private lateinit var messageDelayer: ScheduledExecutorService
@@ -39,16 +39,14 @@ class MessageDispatcher {
             if (msgQueue.isNotEmpty()) {
                 if (serverThrottleValue < THROTTLE_MAX - THROTTLE_PER_MSG) {
                     val pendingMessage = msgQueue.remove()
-                    if (pendingMessage.player == lastPlayerToSend) {
+                    if (pendingMessage.player == lastPlayerSentTo) {
                         Minecraft.getInstance().player!!.sendChatMessage("/m ${pendingMessage.message}")
                         serverThrottleValue = serverThrottleValue + THROTTLE_PER_MSG
-                        println("Current throttle: $serverThrottleValue")
                         messageDelayer.execute(this::sendQueuedMessage)
                     } else {
-                        lastPlayerToSend = pendingMessage.player
-                        Minecraft.getInstance().player!!.sendChatMessage("/msg ${lastPlayerToSend.name} ${pendingMessage.message}")
+                        lastPlayerSentTo = pendingMessage.player
+                        Minecraft.getInstance().player!!.sendChatMessage("/msg ${lastPlayerSentTo.name} ${pendingMessage.message}")
                         serverThrottleValue = serverThrottleValue + THROTTLE_PER_MSG
-                        println("Current throttle: $serverThrottleValue")
                         messageDelayer.schedule(this::sendQueuedMessage, DELAY_SWITCHING_PLAYERS, TimeUnit.MILLISECONDS)
                     }
 
@@ -94,7 +92,7 @@ class MessageDispatcher {
                 messageDelayer.shutdownNow()
             }
             msgQueue.clear()
-            lastPlayerToSend = MessagePlayer.UNKNOWN
+            lastPlayerSentTo = MessagePlayer.UNKNOWN
             serverThrottleValue = 0
             lastServerWorldTime = 0
             threadStatus = ProcessStatus.WAITING
@@ -121,6 +119,6 @@ class MessageDispatcher {
         private const val DELAY_SWITCHING_PLAYERS = 2000L // 2 seconds
 
         private const val THROTTLE_PER_MSG = 20L
-        private const val THROTTLE_MAX = 180L // Technically 200, but fix race conditions
+        private const val THROTTLE_MAX = 180L // Technically 200, but fix race conditions with some padding
     }
 }
