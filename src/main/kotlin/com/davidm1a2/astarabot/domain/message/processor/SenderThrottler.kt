@@ -3,10 +3,11 @@ package com.davidm1a2.astarabot.domain.message.processor
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
 
 class SenderThrottler {
-    private val throttleValues = mutableMapOf<UUID, Int>()
+    private val throttleValues = ConcurrentHashMap<UUID, Int>()
 
     fun isThrottled(playerId: UUID): Boolean {
         return throttleValues[playerId] ?: 0 > THROTTLE_THRESHOLD
@@ -20,7 +21,9 @@ class SenderThrottler {
     @SubscribeEvent
     fun onClientTickEvent(event: TickEvent.ClientTickEvent) {
         if (event.phase == TickEvent.Phase.START) {
-            throttleValues.mapValues { max(0, it.value - 1) }
+            for (playerId in throttleValues.keys) {
+                throttleValues[playerId] = max(0, throttleValues[playerId]!! - 1)
+            }
         }
     }
 

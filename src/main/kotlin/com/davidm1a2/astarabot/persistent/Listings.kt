@@ -1,49 +1,54 @@
 package com.davidm1a2.astarabot.persistent
 
-import com.davidm1a2.astarabot.domain.CommandResult
+import com.davidm1a2.astarabot.domain.message.data.IdPlayer
+import net.minecraft.item.Item
 import net.minecraft.util.IItemProvider
-import java.util.*
 
 class Listings {
-    private val playerListings: MutableMap<UUID, MutableSet<ListingEntry>> = mutableMapOf()
+    private val playerListings: MutableMap<IdPlayer, MutableSet<Listing>> = mutableMapOf()
+    private val itemListings: MutableMap<Item, MutableSet<Listing>> = mutableMapOf()
 
-    fun add(sellerId: UUID, item: IItemProvider, count: Int, price: Int): CommandResult {
-        val listings = playerListings.computeIfAbsent(sellerId) { mutableSetOf() }
-        val isUpdating = listings.any { it.item == item.asItem() }
-        return if (isUpdating || listings.size < MAX_LISTINGS) {
-            val marketEntry = ListingEntry(sellerId, item.asItem(), count, price)
-            if (isUpdating) {
-                listings.removeIf { it.item == item.asItem() }
-                listings.add(marketEntry)
-                CommandResult("Successfully updated the price of ${item.asItem().name.formattedText} to $price diamonds")
-            } else {
-                listings.add(marketEntry)
-                CommandResult("Successfully listed ${item.asItem().name.formattedText} for $price diamonds")
-            }
+    fun add(listing: Listing): Boolean {
+        val playerToListings = playerListings.computeIfAbsent(listing.seller) { mutableSetOf() }
+        val itemListings = itemListings.computeIfAbsent(listing.item) { mutableSetOf() }
+        // Each seller can only sell an item once
+        val wasReplaced = remove(listing.seller, listing.item)
+        playerToListings.add(listing)
+        itemListings.add(listing)
+        return wasReplaced
+    }
+
+    fun get(player: IdPlayer): MutableSet<Listing>? {
+        return playerListings[player]
+    }
+
+    fun get(item: IItemProvider): MutableSet<Listing>? {
+        return itemListings[item.asItem()]
+    }
+
+    fun get(player: IdPlayer, item: IItemProvider): Listing? {
+        return playerListings[player]?.first { it.item == item.asItem() }
+    }
+
+    fun remove(player: IdPlayer, item: IItemProvider): Boolean {
+        val listing = get(player, item)
+        return if (listing != null) {
+            playerListings[listing.seller]?.remove(listing)
+            itemListings[listing.item]?.remove(listing)
+            true
         } else {
-            CommandResult("Failed to add listing for ${item.asItem().name.formattedText}. Limit of $MAX_LISTINGS listings exceeded")
+            false
         }
     }
 
-    fun remove(sellerId: UUID, item: IItemProvider): CommandResult {
-        val removedSuccessfully = playerListings[sellerId]?.removeIf { it.item == item.asItem() } == true
-        return if (removedSuccessfully) {
-            CommandResult("Successfully removed listing for ${item.asItem().name.formattedText}s")
-        } else {
-            CommandResult("You don't have any ${item.asItem().name.formattedText} listed")
+    fun removeAll(player: IdPlayer) {
+        val output = playerListings.remove(player)
+        output?.forEach {
+            itemListings[it.item]?.remove(it)
         }
     }
 
-    fun removeAll(sellerId: UUID): CommandResult {
-        playerListings.remove(sellerId)
-        return CommandResult("Successfully removed all store listings")
-    }
-
-    fun list(sellerId: UUID): Set<ListingEntry> {
-        return playerListings[sellerId] ?: emptySet()
-    }
-
-    companion object {
-        private const val MAX_LISTINGS = 40
+    fun count(player: IdPlayer): Int {
+        return playerListings[player]?.size ?: 0
     }
 }

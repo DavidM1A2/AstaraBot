@@ -1,6 +1,6 @@
 package com.davidm1a2.astarabot.domain
 
-import com.davidm1a2.astarabot.domain.message.data.MessagePlayer
+import com.davidm1a2.astarabot.domain.message.data.IdPlayer
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService
 import net.minecraft.client.Minecraft
 import net.minecraft.server.MinecraftServer
@@ -21,10 +21,10 @@ class AccountUUIDFinder {
         )
     }
 
-    fun getAccount(username: String?): MessagePlayer? {
+    fun getAccount(username: String?): IdPlayer? {
         return username?.let {
             cache.getGameProfileForUsername(it)?.let { gameProfile ->
-                gameProfile.id?.let { id -> MessagePlayer(it, id) }
+                gameProfile.id?.let { id -> IdPlayer(it, id) }
             }
         }
     }

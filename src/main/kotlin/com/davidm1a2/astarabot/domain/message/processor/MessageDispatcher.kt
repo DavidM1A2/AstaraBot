@@ -1,6 +1,6 @@
 package com.davidm1a2.astarabot.domain.message.processor
 
-import com.davidm1a2.astarabot.domain.message.data.MessagePlayer
+import com.davidm1a2.astarabot.domain.message.data.IdPlayer
 import com.davidm1a2.astarabot.domain.packet.ReceivePacketEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.network.play.server.SUpdateTimePacket
@@ -18,12 +18,12 @@ class MessageDispatcher {
     private var lastServerWorldTime = 0L
     private var serverThrottleValue = 0L
 
-    private var lastPlayerSentTo = MessagePlayer.UNKNOWN
+    private var lastPlayerSentTo = IdPlayer.UNKNOWN
     private var threadStatus = ProcessStatus.WAITING
     private val msgQueue: Queue<PendingMessage> = LinkedList()
     private lateinit var messageDelayer: ScheduledExecutorService
 
-    fun send(player: MessagePlayer, message: String) {
+    fun send(player: IdPlayer, message: String) {
         synchronized(msgQueue) {
             msgQueue.add(PendingMessage(player, message))
             // If we're not currently processing the queue, begin processing the queue
@@ -92,7 +92,7 @@ class MessageDispatcher {
                 messageDelayer.shutdownNow()
             }
             msgQueue.clear()
-            lastPlayerSentTo = MessagePlayer.UNKNOWN
+            lastPlayerSentTo = IdPlayer.UNKNOWN
             serverThrottleValue = 0
             lastServerWorldTime = 0
             threadStatus = ProcessStatus.WAITING
@@ -107,7 +107,7 @@ class MessageDispatcher {
         }
     }
 
-    private data class PendingMessage(val player: MessagePlayer, val message: String)
+    private data class PendingMessage(val player: IdPlayer, val message: String)
 
     private enum class ProcessStatus {
         WAITING,

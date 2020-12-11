@@ -1,10 +1,7 @@
 package com.davidm1a2.astarabot.persistent
 
-import com.davidm1a2.astarabot.domain.CommandResult
-import net.minecraft.util.IItemProvider
-import java.util.*
-
 class Subscriptions {
+    /*
     private val itemSubscriptions: MutableMap<UUID, MutableSet<SubscriptionEntry>> = mutableMapOf()
 
     fun add(playerId: UUID, item: IItemProvider): CommandResult {
@@ -30,6 +27,8 @@ class Subscriptions {
         itemSubscriptions.remove(playerId)
         return CommandResult("Successfully unsubscribed from all store notifications")
     }
+
+     */
 
     companion object {
         private const val MAX_SUBSCRIPTIONS = 10
