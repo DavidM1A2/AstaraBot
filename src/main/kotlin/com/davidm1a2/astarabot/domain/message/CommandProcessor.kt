@@ -6,6 +6,8 @@ import com.davidm1a2.astarabot.persistent.ListingHelper
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.BoolArgumentType.bool
 import com.mojang.brigadier.arguments.BoolArgumentType.getBool
+import com.mojang.brigadier.arguments.IntegerArgumentType.getInteger
+import com.mojang.brigadier.arguments.IntegerArgumentType.integer
 import com.mojang.brigadier.arguments.StringArgumentType.*
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import com.mojang.brigadier.builder.RequiredArgumentBuilder.argument
@@ -16,7 +18,7 @@ import net.minecraft.util.ResourceLocation
 import net.minecraftforge.registries.ForgeRegistries
 import kotlin.math.max
 
-class CommandProcessor(private val sender: MessageDispatcher, listingHelper: ListingHelper) {
+class CommandProcessor(private val sender: MessageDispatcher, private val blacklist: Set<String>, listingHelper: ListingHelper) {
     private val dispatcher: CommandDispatcher<IdPlayer> = CommandDispatcher()
 
     init {
@@ -156,10 +158,43 @@ class CommandProcessor(private val sender: MessageDispatcher, listingHelper: Lis
                             })
                 )
         )
+
+        // sell <item> <count> <price in diamonds>
+        dispatcher.register(
+            literal<IdPlayer>("sell")
+                .then(
+                    argument<IdPlayer, String>("item", word())
+                        .then(
+                            argument<IdPlayer, Int>("count", integer())
+                                .then(
+                                    argument<IdPlayer, Int>("priceInDiamonds", integer())
+                                        .executes {
+                                            val itemName = getString(it, "item")
+                                            val item = ForgeRegistries.ITEMS.getValue(ResourceLocation("minecraft", itemName))
+                                            if (item == null) {
+                                                sender.send(it.source, "The requested item '$itemName' is not a valid minecraft item")
+                                            } else {
+                                                val count = getInteger(it, "count")
+                                                val priceInDiamonds = getInteger(it, "priceInDiamonds")
+                                                when {
+                                                    count < 1 -> sender.send(it.source, "Must sell at least one $itemName")
+                                                    priceInDiamonds < 1 -> sender.send(it.source, "Must have a price of at least one diamond")
+                                                    else -> {
+                                                        val result = listingHelper.add(it.source, item, count, priceInDiamonds)
+                                                        sender.send(it.source, result)
+                                                    }
+                                                }
+                                            }
+                                            1
+                                        }
+                                )
+                        )
+                )
+        )
     }
 
     fun process(player: IdPlayer, command: String) {
-        if (Minecraft.getInstance().player?.gameProfile?.id != player.id) {
+        if (!isBlacklisted(player)) {
             try {
                 dispatcher.execute(command, player)
             } catch (e: CommandSyntaxException) {
@@ -178,5 +213,9 @@ class CommandProcessor(private val sender: MessageDispatcher, listingHelper: Lis
                 }
             }
         }
+    }
+
+    private fun isBlacklisted(player: IdPlayer): Boolean {
+        return blacklist.contains(player.name)
     }
 }

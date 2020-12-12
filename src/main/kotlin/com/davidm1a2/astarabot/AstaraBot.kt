@@ -25,7 +25,7 @@ class AstaraBot {
 
         val senderThrottler = SenderThrottler()
         val messageDispatcher = MessageDispatcher()
-        val commandProcessor = CommandProcessor(messageDispatcher, listingHelper)
+        val commandProcessor = CommandProcessor(messageDispatcher, setOf("Robot_Francis", "David_M1A2"), listingHelper)
         val messageHandler = MessageHandler(senderThrottler, commandProcessor)
         if (EffectiveSide.get() == LogicalSide.CLIENT) {
             forgeBus.register(IngameChatHandler(messageHandler, MessageParser()))

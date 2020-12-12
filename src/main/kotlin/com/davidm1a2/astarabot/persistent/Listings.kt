@@ -27,7 +27,7 @@ class Listings {
     }
 
     fun get(player: IdPlayer, item: IItemProvider): Listing? {
-        return playerListings[player]?.first { it.item == item.asItem() }
+        return playerListings[player]?.firstOrNull { it.item == item.asItem() }
     }
 
     fun remove(player: IdPlayer, item: IItemProvider): Boolean {
