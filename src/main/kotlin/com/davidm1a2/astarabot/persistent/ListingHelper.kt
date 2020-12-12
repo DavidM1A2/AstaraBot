@@ -10,13 +10,17 @@ class ListingHelper(private val listings: Listings) {
             val listing = Listing(seller, item.asItem(), count, price)
             listings.add(listing)
             if (isUpdating) {
-                "Successfully updated the price of ${item.asItem().name.formattedText} to $price diamonds"
+                "Successfully updated the price of $count ${item.asItem().name.formattedText}(s) to $price diamonds"
             } else {
-                "Successfully listed ${item.asItem().name.formattedText} for $price diamonds"
+                "Successfully listed $count ${item.asItem().name.formattedText}(s) for $price diamonds"
             }
         } else {
-            "Failed to add listing for ${item.asItem().name.formattedText}. Limit of $MAX_LISTINGS listings exceeded"
+            "Failed to add listing for $count ${item.asItem().name.formattedText}(s). Limit of $MAX_LISTINGS listings exceeded"
         }
+    }
+
+    fun get(seller: IdPlayer, item: IItemProvider): Listing? {
+        return listings.get(seller, item)
     }
 
     fun remove(seller: IdPlayer, item: IItemProvider): String {
@@ -24,7 +28,7 @@ class ListingHelper(private val listings: Listings) {
         return if (removedSuccessfully) {
             "Successfully removed listing for ${item.asItem().name.formattedText}s"
         } else {
-            "You don't have any ${item.asItem().name.formattedText} listed"
+            "You don't have any ${item.asItem().name.formattedText}(s) listed"
         }
     }
 

@@ -14,6 +14,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder.argument
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.I18n
+import net.minecraft.item.Items
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.registries.ForgeRegistries
 import kotlin.math.max
@@ -26,7 +27,7 @@ class CommandProcessor(private val sender: MessageDispatcher, private val blackl
         dispatcher.register(
             literal<IdPlayer>("help")
                 .executes {
-                    sender.send(it.source, "listings")
+                    sender.send(it.source, "listing mine")
                     sender.send(it.source, "listing find <item> <includeOffline=true>")
                     sender.send(it.source, "listing remove <item=ALL>")
                     sender.send(it.source, "sell <item> <count> <price in diamonds>")
@@ -36,22 +37,7 @@ class CommandProcessor(private val sender: MessageDispatcher, private val blackl
                 }
         )
 
-        // listings -> prints out your listings
-        dispatcher.register(
-            literal<IdPlayer>("listings")
-                .executes {
-                    val listingSet = listingHelper.list(it.source)
-                    if (listingSet.isEmpty()) {
-                        sender.send(it.source, "You have no item listings")
-                    } else {
-                        listingSet.sortedBy { entry -> entry.item.name.formattedText }.forEach { entry ->
-                            sender.send(it.source, "Selling ${entry.item.name.formattedText} for ${entry.price} diamonds")
-                        }
-                    }
-                    1
-                }
-        )
-
+        // listing mine -> prints out your listings
         // listing find <item> <hideOffline=true> -> Finds all listings for a given item
         // listing remove <item=ALL> -> Removes one/all listings for an item
         dispatcher.register(
@@ -66,7 +52,7 @@ class CommandProcessor(private val sender: MessageDispatcher, private val blackl
                                             val itemName = getString(it, "item")
                                             val hideOffline = getBool(it, "hideOffline")
                                             val item = ForgeRegistries.ITEMS.getValue(ResourceLocation("minecraft", itemName))
-                                            if (item == null) {
+                                            if (item == null || item == Items.AIR) {
                                                 sender.send(it.source, "The requested item '$itemName' is not a valid minecraft item")
                                             } else {
                                                 val listings = listingHelper.list(item).filter { listing ->
@@ -90,7 +76,7 @@ class CommandProcessor(private val sender: MessageDispatcher, private val blackl
                                 .executes {
                                     val itemName = getString(it, "item")
                                     val item = ForgeRegistries.ITEMS.getValue(ResourceLocation("minecraft", itemName))
-                                    if (item == null) {
+                                    if (item == null || item == Items.AIR) {
                                         sender.send(it.source, "The requested item '$itemName' is not a valid minecraft item")
                                     } else {
                                         val listings = listingHelper.list(item)
@@ -117,7 +103,7 @@ class CommandProcessor(private val sender: MessageDispatcher, private val blackl
                                         sender.send(it.source, result)
                                     } else {
                                         val item = ForgeRegistries.ITEMS.getValue(ResourceLocation("minecraft", itemName))
-                                        if (item == null) {
+                                        if (item == null || item == Items.AIR) {
                                             sender.send(it.source, "The requested item '$itemName' is not a valid minecraft item")
                                         } else {
                                             val result = listingHelper.remove(it.source, item)
@@ -130,6 +116,20 @@ class CommandProcessor(private val sender: MessageDispatcher, private val blackl
                         .executes {
                             val result = listingHelper.removeAll(it.source)
                             sender.send(it.source, result)
+                            1
+                        }
+                )
+                .then(
+                    literal<IdPlayer>("mine")
+                        .executes {
+                            val listingSet = listingHelper.list(it.source)
+                            if (listingSet.isEmpty()) {
+                                sender.send(it.source, "You have no item listings")
+                            } else {
+                                listingSet.sortedBy { entry -> entry.item.name.formattedText }.forEach { entry ->
+                                    sender.send(it.source, "Selling ${entry.item.name.formattedText} for ${entry.price} diamonds")
+                                }
+                            }
                             1
                         }
                 )
@@ -171,7 +171,7 @@ class CommandProcessor(private val sender: MessageDispatcher, private val blackl
                                         .executes {
                                             val itemName = getString(it, "item")
                                             val item = ForgeRegistries.ITEMS.getValue(ResourceLocation("minecraft", itemName))
-                                            if (item == null) {
+                                            if (item == null || item == Items.AIR) {
                                                 sender.send(it.source, "The requested item '$itemName' is not a valid minecraft item")
                                             } else {
                                                 val count = getInteger(it, "count")
@@ -188,6 +188,51 @@ class CommandProcessor(private val sender: MessageDispatcher, private val blackl
                                             1
                                         }
                                 )
+                        )
+                )
+        )
+
+        // buy <item> <player> <multiplier=1>
+        dispatcher.register(
+            literal<IdPlayer>("buy")
+                .then(
+                    argument<IdPlayer, String>("item", word())
+                        .then(
+                            argument<IdPlayer, String>("player", word())
+                                .then(
+                                    argument<IdPlayer, Int>("multiplier", integer())
+                                        .executes {
+                                            val itemName = getString(it, "item")
+                                            val item = ForgeRegistries.ITEMS.getValue(ResourceLocation("minecraft", itemName))
+                                            if (item == null || item == Items.AIR) {
+                                                sender.send(it.source, "The requested item '$itemName' is not a valid minecraft item")
+                                            } else {
+                                                val sellerName = getString(it, "player")
+                                                val sellerPlayer = Minecraft.getInstance().connection?.getPlayerInfo(sellerName)?.gameProfile
+                                                if (sellerPlayer == null) {
+                                                    sender.send(it.source, "$sellerName is offline")
+                                                } else {
+                                                    val multiplier = getInteger(it, "multiplier")
+                                                    if (multiplier < 1) {
+                                                        sender.send(it.source, "Multiplier must be a positive integer")
+                                                    } else {
+                                                        val sellerIdPlayer = IdPlayer(sellerName, sellerPlayer.id)
+                                                        val listing = listingHelper.get(sellerIdPlayer, item)
+                                                        if (listing == null) {
+                                                            sender.send(it.source, "$sellerName is not currently selling $itemName(s)")
+                                                        } else {
+                                                            sender.send(it.source, "Meet $sellerName in /world with ${listing.price * multiplier} diamond(s)")
+                                                            sender.send(sellerIdPlayer, "Meet ${it.source.name} in /world with ${listing.count * multiplier} $itemName(s)")
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            1
+                                        }
+                                )
+                                .executes {
+                                    1
+                                }
                         )
                 )
         )
