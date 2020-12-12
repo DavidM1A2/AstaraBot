@@ -231,6 +231,26 @@ class CommandProcessor(private val sender: MessageDispatcher, private val blackl
                                         }
                                 )
                                 .executes {
+                                    val itemName = getString(it, "item")
+                                    val item = ForgeRegistries.ITEMS.getValue(ResourceLocation("minecraft", itemName))
+                                    if (item == null || item == Items.AIR) {
+                                        sender.send(it.source, "The requested item '$itemName' is not a valid minecraft item")
+                                    } else {
+                                        val sellerName = getString(it, "player")
+                                        val sellerPlayer = Minecraft.getInstance().connection?.getPlayerInfo(sellerName)?.gameProfile
+                                        if (sellerPlayer == null) {
+                                            sender.send(it.source, "$sellerName is offline")
+                                        } else {
+                                            val sellerIdPlayer = IdPlayer(sellerName, sellerPlayer.id)
+                                            val listing = listingHelper.get(sellerIdPlayer, item)
+                                            if (listing == null) {
+                                                sender.send(it.source, "$sellerName is not currently selling $itemName(s)")
+                                            } else {
+                                                sender.send(it.source, "Meet $sellerName in /world with ${listing.price} diamond(s)")
+                                                sender.send(sellerIdPlayer, "Meet ${it.source.name} in /world with ${listing.count} $itemName(s)")
+                                            }
+                                        }
+                                    }
                                     1
                                 }
                         )
