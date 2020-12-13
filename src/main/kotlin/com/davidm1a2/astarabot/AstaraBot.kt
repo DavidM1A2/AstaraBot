@@ -2,6 +2,7 @@ package com.davidm1a2.astarabot
 
 import com.davidm1a2.astarabot.domain.Constants
 import com.davidm1a2.astarabot.domain.IngameChatHandler
+import com.davidm1a2.astarabot.domain.command.*
 import com.davidm1a2.astarabot.domain.message.CommandProcessor
 import com.davidm1a2.astarabot.domain.message.processor.MessageDispatcher
 import com.davidm1a2.astarabot.domain.message.processor.MessageHandler
@@ -23,9 +24,18 @@ class AstaraBot {
         val listings = Listings()
         val listingHelper = ListingHelper(listings)
 
-        val senderThrottler = SenderThrottler()
         val messageDispatcher = MessageDispatcher()
-        val commandProcessor = CommandProcessor(messageDispatcher, setOf("Robot_Francis", "David_M1A2"), listingHelper)
+
+        val commands = listOf(
+            HelpCommand(messageDispatcher),
+            ListingCommand(messageDispatcher, listingHelper),
+            MsgCommand(messageDispatcher),
+            SellCommand(messageDispatcher, listingHelper),
+            BuyCommand(messageDispatcher, listingHelper)
+        )
+
+        val commandProcessor = CommandProcessor(messageDispatcher, setOf("Robot_Francis", "David_M1A2"), commands)
+        val senderThrottler = SenderThrottler()
         val messageHandler = MessageHandler(senderThrottler, commandProcessor)
         if (EffectiveSide.get() == LogicalSide.CLIENT) {
             forgeBus.register(IngameChatHandler(messageHandler, MessageParser()))
