@@ -1,4 +1,6 @@
-package com.davidm1a2.astarabot.domain.message.data
+package com.davidm1a2.astarabot.domain.message
+
+import com.davidm1a2.astarabot.domain.IdPlayer
 
 data class Message(
     val type: MessageType,

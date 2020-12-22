@@ -1,7 +1,7 @@
 package com.davidm1a2.astarabot.domain
 
-import com.davidm1a2.astarabot.domain.message.processor.MessageHandler
-import com.davidm1a2.astarabot.domain.message.processor.MessageParser
+import com.davidm1a2.astarabot.domain.message.MessageHandler
+import com.davidm1a2.astarabot.domain.message.MessageParser
 import net.minecraft.util.text.ChatType
 import net.minecraftforge.client.event.ClientChatReceivedEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent

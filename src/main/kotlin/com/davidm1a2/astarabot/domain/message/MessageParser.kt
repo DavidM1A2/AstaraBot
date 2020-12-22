@@ -1,8 +1,6 @@
-package com.davidm1a2.astarabot.domain.message.processor
+package com.davidm1a2.astarabot.domain.message
 
-import com.davidm1a2.astarabot.domain.AccountUUIDFinder
-import com.davidm1a2.astarabot.domain.message.data.Message
-import com.davidm1a2.astarabot.domain.message.data.MessageType
+import com.davidm1a2.astarabot.dataaccess.AccountUUIDFinder
 
 class MessageParser {
     private val accountFinder = AccountUUIDFinder()

@@ -1,4 +1,4 @@
-package com.davidm1a2.astarabot.domain.dataaccess
+package com.davidm1a2.astarabot.dataaccess
 
 import com.davidm1a2.astarabot.domain.persistent.Listings
 

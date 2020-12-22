@@ -1,8 +1,6 @@
-package com.davidm1a2.astarabot.domain.message.processor
+package com.davidm1a2.astarabot.domain.message
 
-import com.davidm1a2.astarabot.domain.message.CommandProcessor
-import com.davidm1a2.astarabot.domain.message.data.Message
-import com.davidm1a2.astarabot.domain.message.data.MessageType
+import com.davidm1a2.astarabot.domain.command.CommandProcessor
 
 class MessageHandler(private val senderThrottler: SenderThrottler, private val commandProcessor: CommandProcessor) {
     fun receive(message: Message) {

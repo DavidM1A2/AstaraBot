@@ -1,6 +1,6 @@
-package com.davidm1a2.astarabot.domain
+package com.davidm1a2.astarabot.dataaccess
 
-import com.davidm1a2.astarabot.domain.message.data.IdPlayer
+import com.davidm1a2.astarabot.domain.IdPlayer
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService
 import net.minecraft.client.Minecraft
 import net.minecraft.server.MinecraftServer

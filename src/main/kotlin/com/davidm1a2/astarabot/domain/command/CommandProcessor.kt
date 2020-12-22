@@ -1,8 +1,7 @@
-package com.davidm1a2.astarabot.domain.message
+package com.davidm1a2.astarabot.domain.command
 
-import com.davidm1a2.astarabot.domain.command.BotCommand
-import com.davidm1a2.astarabot.domain.message.data.IdPlayer
-import com.davidm1a2.astarabot.domain.message.processor.MessageDispatcher
+import com.davidm1a2.astarabot.domain.IdPlayer
+import com.davidm1a2.astarabot.domain.message.MessageDispatcher
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import net.minecraft.client.resources.I18n

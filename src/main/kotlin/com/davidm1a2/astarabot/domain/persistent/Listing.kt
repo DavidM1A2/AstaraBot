@@ -1,6 +1,6 @@
 package com.davidm1a2.astarabot.domain.persistent
 
-import com.davidm1a2.astarabot.domain.message.data.IdPlayer
+import com.davidm1a2.astarabot.domain.IdPlayer
 import net.minecraft.item.Item
 
 data class Listing(

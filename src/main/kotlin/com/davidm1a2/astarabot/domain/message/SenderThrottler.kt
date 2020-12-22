@@ -1,4 +1,4 @@
-package com.davidm1a2.astarabot.domain.message.processor
+package com.davidm1a2.astarabot.domain.message
 
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent

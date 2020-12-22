@@ -1,6 +1,6 @@
-package com.davidm1a2.astarabot.domain.message.processor
+package com.davidm1a2.astarabot.domain.message
 
-import com.davidm1a2.astarabot.domain.message.data.IdPlayer
+import com.davidm1a2.astarabot.domain.IdPlayer
 import com.davidm1a2.astarabot.domain.packet.ReceivePacketEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.network.play.server.SUpdateTimePacket

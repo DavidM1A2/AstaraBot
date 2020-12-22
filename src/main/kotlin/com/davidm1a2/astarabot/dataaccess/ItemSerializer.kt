@@ -1,4 +1,4 @@
-package com.davidm1a2.astarabot.domain.dataaccess
+package com.davidm1a2.astarabot.dataaccess
 
 import com.google.gson.*
 import net.minecraft.item.Item

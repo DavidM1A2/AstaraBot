@@ -1,7 +1,7 @@
 package com.davidm1a2.astarabot.domain.command
 
-import com.davidm1a2.astarabot.domain.message.data.IdPlayer
-import com.davidm1a2.astarabot.domain.message.processor.MessageDispatcher
+import com.davidm1a2.astarabot.domain.IdPlayer
+import com.davidm1a2.astarabot.domain.message.MessageDispatcher
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType.*
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
