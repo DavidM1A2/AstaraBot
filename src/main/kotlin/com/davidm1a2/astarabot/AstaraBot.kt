@@ -3,7 +3,10 @@ package com.davidm1a2.astarabot
 import com.davidm1a2.astarabot.dataaccess.DataStorer
 import com.davidm1a2.astarabot.domain.Constants
 import com.davidm1a2.astarabot.domain.IngameChatHandler
-import com.davidm1a2.astarabot.domain.command.*
+import com.davidm1a2.astarabot.domain.command.CommandProcessor
+import com.davidm1a2.astarabot.domain.command.HelpCommand
+import com.davidm1a2.astarabot.domain.command.ListingCommand
+import com.davidm1a2.astarabot.domain.command.MsgCommand
 import com.davidm1a2.astarabot.domain.listing.ListingHelper
 import com.davidm1a2.astarabot.domain.listing.Listings
 import com.davidm1a2.astarabot.domain.message.MessageDispatcher
@@ -29,9 +32,7 @@ class AstaraBot {
         val commands = listOf(
             HelpCommand(messageDispatcher),
             ListingCommand(messageDispatcher, listingHelper),
-            MsgCommand(messageDispatcher),
-            SellCommand(messageDispatcher, listingHelper),
-            BuyCommand(messageDispatcher, listingHelper)
+            MsgCommand(messageDispatcher)
         )
 
         val commandProcessor = CommandProcessor(messageDispatcher, setOf("Robot_Francis", "David_M1A2"), commands)
