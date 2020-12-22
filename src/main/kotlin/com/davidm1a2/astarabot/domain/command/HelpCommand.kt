@@ -3,13 +3,13 @@ package com.davidm1a2.astarabot.domain.command
 import com.davidm1a2.astarabot.domain.message.data.IdPlayer
 import com.davidm1a2.astarabot.domain.message.processor.MessageDispatcher
 import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 
 class HelpCommand(private val sender: MessageDispatcher) : BotCommand {
     override fun register(dispatcher: CommandDispatcher<IdPlayer>) {
         dispatcher.register(
             // help -> prints out bot help
-            LiteralArgumentBuilder.literal<IdPlayer>("help")
+            literal<IdPlayer>("help")
                 .executes {
                     sender.send(it.source, "listing mine")
                     sender.send(it.source, "listing find <item> <includeOffline=true>")

@@ -1,4 +1,4 @@
-package com.davidm1a2.astarabot.persistent
+package com.davidm1a2.astarabot.domain.persistent
 
 class Subscriptions {
     /*

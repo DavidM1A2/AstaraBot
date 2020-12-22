@@ -1,4 +1,4 @@
-package com.davidm1a2.astarabot.persistent
+package com.davidm1a2.astarabot.domain.persistent
 
 import com.davidm1a2.astarabot.domain.message.data.IdPlayer
 import net.minecraft.item.Item
@@ -7,6 +7,13 @@ import net.minecraft.util.IItemProvider
 class Listings {
     private val playerListings: MutableMap<IdPlayer, MutableSet<Listing>> = mutableMapOf()
     private val itemListings: MutableMap<Item, MutableSet<Listing>> = mutableMapOf()
+
+    fun loadFrom(other: Listings) {
+        this.playerListings.clear()
+        this.itemListings.clear()
+        this.playerListings.putAll(other.playerListings)
+        this.itemListings.putAll(other.itemListings)
+    }
 
     fun add(listing: Listing): Boolean {
         val playerToListings = playerListings.computeIfAbsent(listing.seller) { mutableSetOf() }

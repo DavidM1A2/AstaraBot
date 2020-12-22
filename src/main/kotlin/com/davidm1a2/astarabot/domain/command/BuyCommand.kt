@@ -2,7 +2,7 @@ package com.davidm1a2.astarabot.domain.command
 
 import com.davidm1a2.astarabot.domain.message.data.IdPlayer
 import com.davidm1a2.astarabot.domain.message.processor.MessageDispatcher
-import com.davidm1a2.astarabot.persistent.ListingHelper
+import com.davidm1a2.astarabot.domain.persistent.ListingHelper
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.IntegerArgumentType.getInteger
 import com.mojang.brigadier.arguments.IntegerArgumentType.integer
