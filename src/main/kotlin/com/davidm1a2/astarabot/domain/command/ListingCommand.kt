@@ -77,7 +77,7 @@ class ListingCommand(private val sender: MessageDispatcher, private val listingH
                                 sender.send(it.source, "You have no item listings")
                             } else {
                                 listingSet.sortedBy { entry -> entry.item.name.formattedText }.forEach { entry ->
-                                    sender.send(it.source, "Selling ${entry.item.name.formattedText} for ${entry.price} diamonds")
+                                    sender.send(it.source, "Selling ${entry.item.name.formattedText} for ${entry.price} ${entry.priceType.friendlyName}")
                                 }
                             }
                             1
@@ -102,7 +102,7 @@ class ListingCommand(private val sender: MessageDispatcher, private val listingH
                 sender.send(player, "This item is not currently being sold")
             } else {
                 listings.forEach { listing ->
-                    sender.send(player, "${listing.seller.name}: ${listing.count} for ${listing.price} diamond(s)")
+                    sender.send(player, "${listing.seller.name}: ${listing.count} for ${listing.price} ${listing.priceType.friendlyName}")
                 }
             }
         }

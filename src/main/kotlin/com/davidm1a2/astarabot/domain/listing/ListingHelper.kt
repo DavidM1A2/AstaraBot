@@ -4,15 +4,15 @@ import com.davidm1a2.astarabot.domain.IdPlayer
 import net.minecraft.util.IItemProvider
 
 class ListingHelper(private val listings: Listings) {
-    fun add(seller: IdPlayer, item: IItemProvider, count: Int, price: Int): String {
+    fun add(seller: IdPlayer, item: IItemProvider, count: Int, price: Int, priceType: PriceType): String {
         val isUpdating = listings.get(seller, item) != null
         return if (isUpdating || listings.count(seller) < MAX_LISTINGS) {
-            val listing = Listing(seller, item.asItem(), count, price)
+            val listing = Listing(seller, item.asItem(), count, price, priceType)
             listings.add(listing)
             if (isUpdating) {
-                "Successfully updated the price of $count ${item.asItem().name.formattedText}(s) to $price diamonds"
+                "Successfully updated the price of $count ${item.asItem().name.formattedText}(s) to $price ${priceType.friendlyName}"
             } else {
-                "Successfully listed $count ${item.asItem().name.formattedText}(s) for $price diamonds"
+                "Successfully listed $count ${item.asItem().name.formattedText}(s) for $price ${priceType.friendlyName}"
             }
         } else {
             "Failed to add listing for $count ${item.asItem().name.formattedText}(s). Limit of $MAX_LISTINGS listings exceeded"

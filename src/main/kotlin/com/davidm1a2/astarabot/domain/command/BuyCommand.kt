@@ -62,7 +62,7 @@ class BuyCommand(private val sender: MessageDispatcher, private val listingHelpe
                     if (listing == null) {
                         sender.send(player, "$sellerName is not currently selling $itemName(s)")
                     } else {
-                        sender.send(player, "Meet $sellerName in /world with ${listing.price * multiplier} diamond(s)")
+                        sender.send(player, "Meet $sellerName in /world with ${listing.price * multiplier} ${listing.priceType.friendlyName}")
                         sender.send(sellerIdPlayer, "Meet ${player.name} in /world with ${listing.count * multiplier} $itemName(s)")
                     }
                 }

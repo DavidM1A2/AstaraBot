@@ -7,5 +7,6 @@ data class Listing(
     val seller: IdPlayer,
     val item: Item,
     val count: Int,
-    val price: Int // in diamonds
+    val price: Int,
+    val priceType: PriceType
 )

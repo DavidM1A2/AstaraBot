@@ -14,7 +14,7 @@ class HelpCommand(private val sender: MessageDispatcher) : BotCommand {
                     sender.send(it.source, "listing mine")
                     sender.send(it.source, "listing find <item> <includeOffline=true>")
                     sender.send(it.source, "listing remove <item=ALL>")
-                    sender.send(it.source, "sell <item> <count> <price in diamonds>")
+                    sender.send(it.source, "sell <item> <count> <price>[type=d/db]")
                     sender.send(it.source, "buy <item> <player> <multiplier=1>")
                     sender.send(it.source, "msg <player> <message>")
                     1
