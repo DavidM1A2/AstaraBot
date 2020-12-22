@@ -96,7 +96,6 @@ class MessageDispatcher {
             serverThrottleValue = 0
             lastServerWorldTime = 0
             threadStatus = ProcessStatus.WAITING
-            println("Cleared")
         }
     }
 

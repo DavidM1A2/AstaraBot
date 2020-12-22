@@ -4,13 +4,13 @@ import com.davidm1a2.astarabot.dataaccess.DataStorer
 import com.davidm1a2.astarabot.domain.Constants
 import com.davidm1a2.astarabot.domain.IngameChatHandler
 import com.davidm1a2.astarabot.domain.command.*
+import com.davidm1a2.astarabot.domain.listing.ListingHelper
+import com.davidm1a2.astarabot.domain.listing.Listings
 import com.davidm1a2.astarabot.domain.message.MessageDispatcher
 import com.davidm1a2.astarabot.domain.message.MessageHandler
 import com.davidm1a2.astarabot.domain.message.MessageParser
 import com.davidm1a2.astarabot.domain.message.SenderThrottler
 import com.davidm1a2.astarabot.domain.packet.PacketInterceptor
-import com.davidm1a2.astarabot.domain.persistent.ListingHelper
-import com.davidm1a2.astarabot.domain.persistent.Listings
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.LogicalSide
 import net.minecraftforge.fml.common.Mod

@@ -1,4 +1,4 @@
-package com.davidm1a2.astarabot.domain.persistent
+package com.davidm1a2.astarabot.domain.listing
 
 import com.davidm1a2.astarabot.domain.IdPlayer
 import net.minecraft.item.Item

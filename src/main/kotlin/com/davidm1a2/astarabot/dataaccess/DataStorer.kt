@@ -1,6 +1,6 @@
 package com.davidm1a2.astarabot.dataaccess
 
-import com.davidm1a2.astarabot.domain.persistent.Listings
+import com.davidm1a2.astarabot.domain.listing.Listings
 import com.google.gson.GsonBuilder
 import net.minecraft.item.Item
 import net.minecraft.network.NetworkManager
